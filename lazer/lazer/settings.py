@@ -31,10 +31,12 @@ INSTALLED_APPS = [
     'ckeditor_uploader',
     'django_celery_beat',
     'jazzmin',
+    'corsheaders',
 
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -112,6 +114,9 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
+    
 }
 
 SIMPLE_JWT = {
@@ -221,6 +226,11 @@ from lazer.celery import app
 app.conf.beat_schedule = {
     'send_reminder_every_30_min': {
         'task': 'apps.appointments.tasks.send_appointment_reminder',
-        'schedule': crontab(minute='*/30'),  # هر ۳۰ دقیقه یک بار اجرا شود
+        'schedule': crontab(minute='*/30'),
     },
 }
+
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",  # آدرس فرانت‌اند
+]

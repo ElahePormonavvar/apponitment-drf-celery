@@ -1,0 +1,90 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com"/>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet"/>
+
+    <link rel="stylesheet" href="{% static 'css/bootstrap-icon.css' %}" />
+    <title>elalaser | Home</title>
+  </head>
+  <body>
+    <!-- navbar -->
+    <span class="nav-btn" id="nav-btn">
+      <i class="bi bi-list-nested"></i>
+    </span>
+    <nav class="navbar" id="navbar">
+      <div class="navbar-header">
+        <span class="nav-close" id="nav-close">
+          <i class="bi bi-x"></i>
+        </span>
+      </div>
+      <ul class="nav-items">
+        <li>
+          <a href="index.html" class="nav-link">
+            <i class="bi bi-house-fill"></i>
+            صفحه اصلی
+          </a>
+        </li>
+        <li>
+          <a href="about.html" class="nav-link">
+            <i class="bi bi-info-circle-fill"></i>
+            درباره ما 
+          </a>
+        </li>
+        <li>
+          <a href="products.html" class="nav-link">
+            <i class="bi bi-box-seam-fill"></i>
+            محصولات 
+          </a>
+        </li>
+        <li>
+          <a href="services.html" class="nav-link">
+            <i class="bi bi-calendar2-check-fill"></i>
+            خدمات 
+          </a>
+        </li>
+        <li>
+          <a href="contact-us.html" class="nav-link">
+            <i class="bi bi-chat-right-dots-fill"></i>
+            تماس با ما 
+          </a>
+        </li>
+        <li>
+          <a href="contact-us.html" class="nav-link">
+            <i class="bi bi-grid-1x2-fill"></i>
+            دسته بندی محصولات 
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <!-- end of navbar -->
+    
+    <!-- header -->
+    {% include 'header.html' %}
+
+    <!--End of header -->
+
+    
+
+      <!-- login -->
+      <div id="login-form">
+          <h2>ورود</h2>
+          <label for="id_mobile_number">نام کاربری</label>
+          <input type="text" id="login-username" placeholder="نام کاربری">
+          <label for="id_mobile_number">رمز عبور</label>
+          <input type="password" id="login-password" placeholder="رمز عبور">
+          <button onclick="login()">ورود</button>
+      </div>
+
+
+
+
+      <script src="{% static 'js/app.js' %}"></script>
+
+  </body>
+</html>

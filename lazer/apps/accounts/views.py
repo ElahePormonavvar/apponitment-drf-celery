@@ -1,7 +1,8 @@
 from rest_framework import status,generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .serializers import (RegisterSerializer,ActivateUserSerializer,SendActivationCodeSerializer,ChangePasswordSerializer,CustomUserSerializer)
+from .serializers import (RegisterSerializer,ActivateUserSerializer,SendActivationCodeSerializer,
+                          ChangePasswordSerializer,CustomUserSerializer)
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets
@@ -11,6 +12,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken
+from django.utils import timezone
 
 # ---------------------------------------------------------------------------------------------------------------
 class RegisterUser(GenericAPIView):
@@ -26,6 +28,17 @@ class RegisterUser(GenericAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 # ----------------------------------------------------------------------------------------------------------------
+# class ActivateUser(APIView):
+#     def post(self, request):
+#         serializer = ActivateUserSerializer(data=request.data)
+        
+#         if serializer.is_valid():
+#             data = serializer.save()
+#             return Response(data, status=status.HTTP_200_OK)
+        
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class ActivateUser(GenericAPIView):
     serializer_class = ActivateUserSerializer
 
@@ -34,8 +47,21 @@ class ActivateUser(GenericAPIView):
         if serializer.is_valid():
             # فعال‌سازی حساب کاربری
             user = serializer.save()
+
+            # تولید توکن JWT
+            refresh = RefreshToken.for_user(user)
+            access_token = str(refresh.access_token)
+
             return Response({
-                "message": "حساب کاربری شما با موفقیت فعال شد. حالا می‌توانید وارد حساب خود شوید."
+                "message": "حساب کاربری شما با موفقیت فعال شد. حالا می‌توانید وارد حساب خود شوید.",
+                "refresh": str(refresh),
+                "access": access_token,
+                "user": {
+                    "mobile_number": user.mobile_number,
+                    "email": user.email,
+                    "name": user.name,
+                    "family": user.family,
+                }
             }, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -45,6 +71,10 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         data = super().validate(attrs)
         user = self.user
+        # به‌روزرسانی زمان آخرین ورود کاربر
+        user.last_login = timezone.now()
+        user.save()
+
         data.update({
             "message": "ورود با موفقیت انجام شد",
             "user": {
@@ -84,23 +114,7 @@ class LogoutView(generics.GenericAPIView):
 
         except Exception as e:
             return Response({"error": f"خطایی رخ داده است: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
-
-# class LogoutView(generics.GenericAPIView):
-#     permission_classes = [IsAuthenticated]
-
-#     def post(self, request, *args, **kwargs):
-#         try:
-#             refresh_token = request.data.get("refresh")
-#             if not refresh_token:
-#                 return Response({"error": "توکن رفرش ارائه نشده است"}, status=status.HTTP_400_BAD_REQUEST)
-
-#             token = RefreshToken(refresh_token)
-#             token.blacklist()
-
-#             return Response({"message": "با موفقیت خارج شدید"}, status=status.HTTP_200_OK)
-#         except Exception as e:
-#             return Response({"error": "خطایی رخ داده است"}, status=status.HTTP_400_BAD_REQUEST)
-
+        
 # ------------------------------------------------------------------------------------------
 class SendActivationCodeView(APIView):
     def post(self, request):
@@ -109,6 +123,7 @@ class SendActivationCodeView(APIView):
             serializer.save()
             return Response({"message": "کد فعال‌سازی به شماره موبایل ارسال شد."}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
 # --------------------------------------------------------------------------------------------        
 class PasswordRememberRequestView(APIView):
     def post(self, request, *args, **kwargs):

@@ -8,12 +8,13 @@ def creat_random_code(count):
     return random.randint(10**count,10**(count+1)-1)
 
 #----------------------------------------------------------------------------
+180833
 def send_sms(number, code):
     try:
         sms_ir = SmsIr(api_key=settings.API_KEY_SMS1)
         result = sms_ir.send_verify_code(
             number=str(number),
-            template_id=654532,
+            template_id=180833,
             parameters=[
                 {
                     "name": "CODE",
