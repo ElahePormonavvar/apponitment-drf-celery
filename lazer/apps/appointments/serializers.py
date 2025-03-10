@@ -1,20 +1,24 @@
 from rest_framework import serializers
-from .models import Appointment
-from django.contrib.auth import get_user_model
 from django.utils.timezone import now 
-
+from .models import DoctorSchedule, Appointment
+from apps.accounts.models import CustomUser
 # ----------------------------------------------------------------------------
-User = get_user_model()
 
 class AppointmentSerializer(serializers.ModelSerializer):
-    patient = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
-    doctor = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    patient = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())
+    doctor = serializers.ReadOnlyField(source='schedule.doctor.id')
     
     class Meta:
         model = Appointment
-        fields = ['patient', 'doctor', 'appointment_date', 'status']
+        fields = ['id', 'patient', 'appointment_date', 'doctor', 'schedule', 'status', 'created_at']
 
     def validate_appointment_date(self, value):
         if value <= now():
             raise serializers.ValidationError("The appointment date must be in the future.")
         return value
+
+# ----------------------------------------------------------------------------
+class DoctorScheduleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DoctorSchedule
+        fields = ['id', 'doctor', 'date', 'start_time', 'end_time', 'is_available']

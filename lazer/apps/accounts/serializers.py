@@ -39,46 +39,6 @@ class RegisterSerializer(serializers.ModelSerializer):
         return user
     
 # -----------------------------------------------------------------------------------------------------------------
-# class ActivateUserSerializer(serializers.Serializer):
-#     mobile_number = serializers.CharField()
-#     activation_code = serializers.CharField()
-
-#     def validate(self, data):
-#         mobile_number = data.get("mobile_number")
-#         activation_code = data.get("activation_code")
-
-#         try:
-#             user = CustomUser.objects.get(mobile_number=mobile_number, active_code=str(activation_code))
-#         except CustomUser.DoesNotExist:
-#             raise serializers.ValidationError({"error": "کد فعال‌سازی نامعتبر است"})
-
-#         if user.is_active:
-#             raise serializers.ValidationError({"error": "حساب کاربری قبلاً فعال شده است"})
-
-#         data["user"] = user
-#         return data
-
-#     def save(self):
-#         user = self.validated_data["user"]
-#         user.is_active = True
-#         user.active_code = None  # حذف کد فعال‌سازی پس از استفاده
-#         user.last_login = timezone.now()
-#         user.save()
-
-#         # تولید توکن JWT
-#         refresh = RefreshToken.for_user(user)
-#         return {
-#             "message": "حساب کاربری با موفقیت فعال شد",
-#             "access": str(refresh.access_token),
-#             "refresh": str(refresh),
-#             "user": {
-#                 "mobile_number": user.mobile_number,
-#                 "email": user.email,
-#                 "name": user.name,
-#                 "family": user.family,
-#             }
-#         }
-
 class ActivateUserSerializer(serializers.Serializer):
     mobile_number = serializers.CharField(max_length=11, required=True)
     active_code = serializers.CharField(max_length=5, required=True)

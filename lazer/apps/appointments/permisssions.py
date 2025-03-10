@@ -1,8 +1,23 @@
-from rest_framework import permissions
+from rest_framework.permissions import BasePermission
 
-
-
-# فقط دکتر نوبت یا کاربران staff می‌توانند حذف کنند
-class IsDoctorOrStaff(permissions.BasePermission):
+# ----------------------------------------------------------------------------
+class IsDoctorOrStaff(BasePermission):
     def has_object_permission(self, request, view, obj):
         return request.user == obj.doctor or request.user.is_staff
+    
+# ----------------------------------------------------------------------------
+class RoleBasedPermission(BasePermission):
+    allowed_roles = []
+
+    def has_permission(self, request, view):
+        return request.user.role in self.allowed_roles
+    
+# ----------------------------------------------------------------------------
+class IsDoctor(RoleBasedPermission):
+    allowed_roles = ['doctor']
+# ----------------------------------------------------------------------------
+class IsPatient(RoleBasedPermission):
+    allowed_roles = ['patient']
+# ----------------------------------------------------------------------------
+class IsReceptionistOrDoctor(RoleBasedPermission):
+    allowed_roles = ['receptionist', 'doctor']

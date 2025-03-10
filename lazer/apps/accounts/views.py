@@ -28,17 +28,6 @@ class RegisterUser(GenericAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 # ----------------------------------------------------------------------------------------------------------------
-# class ActivateUser(APIView):
-#     def post(self, request):
-#         serializer = ActivateUserSerializer(data=request.data)
-        
-#         if serializer.is_valid():
-#             data = serializer.save()
-#             return Response(data, status=status.HTTP_200_OK)
-        
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
 class ActivateUser(GenericAPIView):
     serializer_class = ActivateUserSerializer
 
